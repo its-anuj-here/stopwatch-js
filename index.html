@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StopWatch</title>
+    <style>
+        body{
+            background-color: black;
+            color: white;
+            height: 97vh;
+            width: 99vw;
+            display: flex;
+            justify-content: center;
+        }
+
+        #page-header{
+            text-align: center;
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .container{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            height: 100%;
+            width: 50%;
+            background-color: rgba(24, 24, 24, 0.85);
+        }
+        #time-container{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 7vw;
+            text-wrap: none;
+            height: 28%;
+            width: 90%;
+            color: rgb(254, 115, 65);
+            font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            
+        }
+        #timer{
+            letter-spacing: 0.3rem;
+        }
+
+        #ctrl-btn-container{
+            margin: 1.1% 0;
+            width: 70%;
+            display: flex;
+            min-height: 15%;
+            justify-content: space-between;
+            
+        }
+        .btn-container{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 20%;
+            height: 97%;
+            border-radius: 50%;
+        }
+        #lap-btn-container{
+            background-color: rgb(206, 206, 206);
+            color: rgb(80, 79, 79);
+            border: 6px double gray;
+        }
+        .start-btn-container{
+            background-color: rgb(4, 125, 4);
+            color: rgb(88, 253, 88);
+            border: 6px double rgb(88, 253, 88);
+        }
+        .stop-btn-container{
+            background-color: rgb(255, 222, 222) !important;
+            color: rgb(246, 81, 81) !important;
+            border: 6px double rgb(234, 101, 101) !important;
+        }
+
+        .ctrl-btns{
+            font-weight: 800;
+        }
+
+        #lap-list-container{
+            width: 75%;
+            display: flex;
+            flex-direction: column;
+            margin-top: 3%;
+            overflow-y: auto;
+            scrollbar-width: none;
+            max-height: 35%;
+        }
+        .lap-container{
+            
+            border-top: 2px solid rgb(177, 175, 175);
+            margin-top: 2.3%;
+            padding-top: 1.1%;
+            color: rgba(128, 128, 128, 0.863);
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.4rem;
+        }
+        .lap-container:nth-child(1){
+            color: white;
+        }
+    </style>
+    
+</head>
+<body>
+    
+    <div class="container" id="container">
+        <h1 id="page-header">StopWatch</h1>
+    </div>
+    <script>
+        const container = document.getElementById('container');
+        let timer = { minutes:0,seconds:0,milliSeconds:0,counter:0,lapCount:0}; 
+        let timerStart=false;
+
+        function incLapCount(){
+            timer.lapCount++;
+        }
+
+        function createLap(){
+            incLapCount();
+            return {id: timer.lapCount, name: 'Lap-'+timer.lapCount, min: timer.minutes, sec:timer.seconds, ms: timer.milliSeconds};
+        }
+
+        function addLap(lapObj){
+            const lapListContainer = document.getElementById('lap-list-container');
+            let lapContainer = document.createElement('div');
+            lapContainer.id='lap-'+lapObj.id;
+            lapContainer.classList.add('lap-container');
+
+            let lapName = document.createElement('label');
+            lapName.id='lap-'+lapObj.id+'-name';
+            lapName.classList.add('lap-name-label');
+            lapName.innerText="Lap-"+lapObj.id;
+
+            let lapTime = document.createElement('label');
+            lapTime.id='lap-'+lapObj.id+'-time';
+            lapTime.classList.add('lap-time-label');
+            lapTime.innerText= checkTime(lapObj.min) + ":" + checkTime(lapObj.sec)+ ":" + checkTime(lapObj.ms);;
+
+            lapContainer.appendChild(lapName);
+            lapContainer.appendChild(lapTime);
+
+            /*
+            //If you want to limit the number of laps that list can contain
+             if(lapListContainer.children.length>4){
+                lapListContainer.removeChild(lapListContainer.lastChild);
+            } */
+
+            lapListContainer.insertBefore(lapContainer, lapListContainer.firstChild);
+        }
+        function createStopWatch(){
+            let timeContainer = document.createElement('div');
+            timeContainer.classList.add('time-container');
+            timeContainer.id= "time-container";
+
+            let timeLabel = document.createElement('label');
+            timeLabel.innerText='00:00:00';
+            timeLabel.id='timer';
+            
+            timeContainer.appendChild(timeLabel);
+            container.appendChild(timeContainer);
+
+            let ctrlBtnContainer = document.createElement('div');
+            ctrlBtnContainer.id='ctrl-btn-container';
+            ctrlBtnContainer.classList.add('ctrl-btns-container');
+            ctrlBtnContainer.addEventListener('click', function(event){
+                let invoker = event.target;
+                if(invoker.id === 'start-btn-container' || invoker.id === 'start-btn'){
+                    timerStart = !timerStart;
+                    let startBtn = document.getElementById('start-btn');
+                    if(startBtn.innerText =='Start'){
+                        startBtn.innerText='Stop';
+                        startBtn.parentElement.classList.add('stop-btn-container');
+                        document.getElementById('lap-btn').innerText = 'Lap';
+                    }else{
+                        startBtn.innerText='Start';
+                        startBtn.parentElement.classList.remove('stop-btn-container');
+                        document.getElementById('lap-btn').innerText = 'Reset';
+                    }
+                }else if(invoker.id === 'lap-btn-container' || invoker.id === 'lap-btn'){
+                    let startBtn = document.getElementById('start-btn');
+                    if(startBtn.innerText =='Start'){
+                        resetWatch();
+                    }else{
+                        let lapObj = createLap();
+                        addLap(lapObj);
+                    }
+                    
+                }
+            });
+
+            let lapBtnContainer =document.createElement('div');
+            lapBtnContainer.classList.add("btn-container");
+            lapBtnContainer.id = "lap-btn-container";
+            let lapBtn = document.createElement('span');
+            lapBtn.id = 'lap-btn';
+            lapBtn.classList.add('ctrl-btns');
+            lapBtn.innerText="Reset";
+            lapBtnContainer.appendChild(lapBtn);
+            
+            let startBtnContainer = document.createElement('div');
+            startBtnContainer.classList.add("btn-container");
+            startBtnContainer.classList.add('start-btn-container');
+            startBtnContainer.id = "start-btn-container";
+            let startBtn = document.createElement('span');
+            startBtn.id = 'start-btn';
+            startBtn.classList.add('ctrl-btns');
+            startBtn.innerText="Start";
+            startBtnContainer.appendChild(startBtn);
+
+            ctrlBtnContainer.appendChild(lapBtnContainer);
+            ctrlBtnContainer.appendChild(startBtnContainer);
+            container.appendChild(ctrlBtnContainer);
+
+            let lapListContainer =document.createElement('div');
+            lapListContainer.id='lap-list-container';
+            lapListContainer.classList.add('lap-list-container');
+            
+            container.appendChild(lapListContainer);
+        }
+        function checkTime(i) {
+        if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+        return i;
+        }
+
+        function resetWatch(){
+            timerStart=false;
+            timer.minutes=0;
+            timer.seconds=0;
+            timer.milliSeconds=0;
+            timer.counter=0;
+            timer.lapCount=0;
+            document.getElementById('timer').innerText='00:00:00';
+            document.getElementById('lap-list-container').innerHTML = "";
+        }
+
+        function setWatch(){
+            document.getElementById('timer').innerText =  checkTime(timer.minutes) + ":" + checkTime(timer.seconds)+ ":" + checkTime(timer.milliSeconds);
+        }
+        function incWatch(){
+            timer.counter++;
+            timer.milliSeconds = timer.counter%100;
+            timer.seconds = Math.floor(timer.counter/100)%60;
+            timer.minutes = Math.floor(Math.floor(timer.counter/100)/60)%60;
+        }
+        function startWatch(){
+            setInterval(function(){
+                if(timerStart===true){
+                    setWatch();
+                    incWatch();
+                }
+            }, 10);
+        }
+
+        createStopWatch();
+        startWatch();
+    </script>
+</body>
+</html>
