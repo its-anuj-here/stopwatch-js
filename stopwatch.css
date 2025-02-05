@@ -1,0 +1,96 @@
+body{
+    background-color: black;
+    color: white;
+    height: 97vh;
+    width: 99vw;
+    display: flex;
+    justify-content: center;
+}
+
+#page-header{
+    text-align: center;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    width: 50%;
+    background-color: rgba(24, 24, 24, 0.85);
+}
+#time-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 7vw;
+    text-wrap: none;
+    height: 28%;
+    width: 90%;
+    color: rgb(254, 115, 65);
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    
+}
+#timer{
+    letter-spacing: 0.3rem;
+}
+
+#ctrl-btn-container{
+    margin: 1.1% 0;
+    width: 70%;
+    display: flex;
+    min-height: 15%;
+    justify-content: space-between;
+    
+}
+.btn-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20%;
+    height: 97%;
+    border-radius: 50%;
+}
+#lap-btn-container{
+    background-color: rgb(206, 206, 206);
+    color: rgb(80, 79, 79);
+    border: 6px double gray;
+}
+.start-btn-container{
+    background-color: rgb(4, 125, 4);
+    color: rgb(88, 253, 88);
+    border: 6px double rgb(88, 253, 88);
+}
+.stop-btn-container{
+    background-color: rgb(255, 222, 222) !important;
+    color: rgb(246, 81, 81) !important;
+    border: 6px double rgb(234, 101, 101) !important;
+}
+
+.ctrl-btns{
+    font-weight: 800;
+}
+
+#lap-list-container{
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 3%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    max-height: 35%;
+}
+.lap-container{
+    
+    border-top: 2px solid rgb(177, 175, 175);
+    margin-top: 2.3%;
+    padding-top: 1.1%;
+    color: rgba(128, 128, 128, 0.863);
+    display: flex;
+    justify-content: space-between;
+    font-size: 1.4rem;
+}
+.lap-container:nth-child(1){
+    color: white;
+}
